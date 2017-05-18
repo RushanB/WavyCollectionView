@@ -11,29 +11,31 @@
 @implementation WavyFlowLayout
 
 -(void)prepareLayout{
-    self.scrollDirection = UICollectionViewScrollDirectionHorizontal;
-    self.itemSize = CGSizeMake(100, 50);
-    
+    self.scrollDirection = UICollectionViewScrollDirectionHorizontal; //horizontal scrolling
+    self.itemSize = CGSizeMake(100, 50);  //cell size
     self.minimumInteritemSpacing = CGFLOAT_MAX;
 }
 
--(CGSize)collectionViewContentSize{
-    CGSize sizeOfView = [self collectionView].contentSize;
-    return sizeOfView;
-}
+//-(CGSize)collectionViewContentSize{
+//    CGSize sizeOfView = [self collectionView].contentSize;
+//    return sizeOfView;
+//}
 
 
 -(NSArray<UICollectionViewLayoutAttributes *> *)layoutAttributesForElementsInRect:(CGRect)rect{
+    
     NSArray<UICollectionViewLayoutAttributes *> *superAttrs = [super layoutAttributesForElementsInRect:rect];
     //copy attrs from super to avoid cached frame mismatch
-    NSMutableArray<UICollectionViewLayoutAttributes *> *newAttrs = [[NSMutableArray alloc] initWithArray:superAttrs];
+    NSMutableArray<UICollectionViewLayoutAttributes *> *newAttrs = [NSMutableArray new];
     
-    for(UICollectionViewLayoutAttributes *attributes in newAttrs){
-        CGFloat randY = arc4random_uniform(600);
-        attributes.frame = CGRectMake(attributes.frame.origin.x, randY, self.itemSize.width, self.itemSize.height);
+    CGFloat collectionViewHeight = self.collectionView.frame.size.height;  //max height
+    
+    for(UICollectionViewLayoutAttributes *attributes in superAttrs){
+        CGFloat randY = arc4random_uniform(collectionViewHeight - self.itemSize.height);  //randomize y values
+        UICollectionViewLayoutAttributes *attributesCopy = [attributes copy];
+        attributesCopy.frame = CGRectMake(attributesCopy.frame.origin.x, randY, self.itemSize.width, ((collectionViewHeight-randY)/100)*self.itemSize.height);  //set height
+        [newAttrs addObject:attributesCopy];  //new attrs get copied attrs
     }
-    
-    
     
     return newAttrs;
 }
